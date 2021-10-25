@@ -1,9 +1,10 @@
 languaje: php
 php: 7.4
-
+before_install:
+  -php /home/travis/.phpenv/versions/7.4.20/composer.phar self-update
 before_script: 
-composer install --no-interaction
+  - composer install
 
 script:
--vendor/bin/phpunit
+ phpunit -- configuration phpunit-xml -- coverage-text
 
