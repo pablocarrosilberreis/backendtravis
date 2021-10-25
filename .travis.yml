@@ -1,4 +1,4 @@
-languaje: php
+language: php
 php: 7.4
 before_install:
   -php /home/travis/.phpenv/versions/7.4.20/composer.phar self-update
