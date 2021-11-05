@@ -50,6 +50,7 @@ class PostulantesController extends Controller
 
     /**
      * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\RecursoNoEncontradoException
      */
     public function index()
     {
@@ -60,10 +61,10 @@ class PostulantesController extends Controller
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\RecursoNoEncontradoException
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-
     public function store(Request $request)
     {
         $postulante = new Postulante();
@@ -76,6 +77,7 @@ class PostulantesController extends Controller
     /**
      * @param $id
      * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\RecursoNoEncontradoException
      */
     public function show($id)
     {
@@ -108,7 +110,7 @@ class PostulantesController extends Controller
         $this->repositorioDePostulantes->entityManager()->flush();
     }
 
-    private function asignarParametros(Postulante $postulante, $parametros)
+    private function asignarParametros(Postulante $postulante, $parametros, $estaCreando = true)
     {
         $postulante->setNombre($parametros['nombre']);
         $postulante->setApellido($parametros['apellido']);

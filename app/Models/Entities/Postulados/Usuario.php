@@ -20,6 +20,14 @@ class Usuario extends Activable implements \JsonSerializable
      */
     private string $usuarioExterno;
 
+    //TODO: Integracion con auth0 en php https://auth0.com/docs/libraries/auth0-php
+
+    /**
+     * @var string
+     * @ORM\Column(name="auth0_id", type="string")
+     */
+    private string $auth0_id;
+
     /**
      * @var \DateTime
      * @ORM\Column(name="ultimaFechaConexion", type="datetime")

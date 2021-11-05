@@ -19,7 +19,6 @@ use Carbon\Traits\Date;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Type\Integer;
 
-//TODO: Completar Publicacion
 class PublicacionesController extends Controller
 {
     private RepositorioDePublicaciones $repositorioDePublicaciones;
@@ -59,7 +58,12 @@ class PublicacionesController extends Controller
      */
     public function index()
     {
-        $publicaciones = $this->repositorioDePublicaciones->findAll();
+        $publicaciones = $this->repositorioDePublicaciones->findBy([
+            'activo' => true,
+            'oculto' => false,
+        ], [
+            'fechaInicio' => 'ASC'
+        ]);
         return parent::respuestaJson($publicaciones);
     }
 
@@ -73,6 +77,7 @@ class PublicacionesController extends Controller
      */
     public function store(Request $request)
     {
+        //TODO: Validar campos
         $publicacion = new Publicacion();
         $this->asginarParametros($publicacion, $request);
         $this->repositorioDePublicaciones->entityManager()->persist($publicacion);
@@ -117,9 +122,10 @@ class PublicacionesController extends Controller
         $this->repositorioDePublicaciones->entityManager()->flush();
     }
 
-    private function asginarParametros(Publicacion $publicacion, $parametros)
+    private function asginarParametros(Publicacion $publicacion, $parametros, $estaCreando = true)
     {
         $publicacion->activar();
+        $publicacion->mostrar();
         $publicacion->setTitulo($parametros['titulo']);
         $publicacion->setDescripcion($parametros['descripcion']);
         $publicacion->setRequisitos($parametros['requisitos']);
@@ -127,6 +133,7 @@ class PublicacionesController extends Controller
         $publicacion->setHorarioInicio($parametros['horario_inicio']);
         $publicacion->setHorarioFin($parametros['horario_fin']);
         $publicacion->setBeneficios($parametros['beneficios']);
+        //TODO: Verificar fechas antes de setearlas en el validate
         $publicacion->setFechaInicio(\DateTime::createFromFormat('Y-m-d', $parametros["fecha_inicio"]));
         $publicacion->setFechaCierre(\DateTime::createFromFormat('Y-m-d', $parametros["fecha_cierre"]));
         $publicacion->setFechaUltimaModificacion(new \DateTime('now'));

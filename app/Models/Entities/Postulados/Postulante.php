@@ -252,6 +252,7 @@ class Postulante extends Activable implements \JsonSerializable
      */
     public function setDireccion(Direccion $direccion): void
     {
+        //TODO: Hacer bidireccionalidad -> setear postulante en direccion
         $this->direccion = $direccion;
     }
 

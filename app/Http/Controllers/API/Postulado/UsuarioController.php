@@ -9,7 +9,6 @@ use Carbon\Traits\Date;
 use Illuminate\Http\Request;
 use Nette\Utils\DateTime;
 
-//TODO: Completar Usuario
 class UsuarioController extends Controller
 {
     private RepositorioDeUsuarios $repositorioDeUsuarios;

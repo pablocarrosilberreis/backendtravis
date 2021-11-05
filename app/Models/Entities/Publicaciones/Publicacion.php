@@ -35,12 +35,6 @@ class Publicacion extends Activable implements \JsonSerializable
 
     /**
      * @var string
-     * @ORM\Column(name="requisitos", type="string")
-     */
-    private string $requisitos;
-
-    /**
-     * @var string
      * @ORM\Column(name="salario", type="string")
      */
     private string $salario;
@@ -57,11 +51,6 @@ class Publicacion extends Activable implements \JsonSerializable
      */
     private string $horarioFin;
 
-    /**
-     * @var string
-     * @ORM\Column(name="beneficios", type="string")
-     */
-    private string $beneficios;
 
     /**
      * @var \DateTime
@@ -104,6 +93,24 @@ class Publicacion extends Activable implements \JsonSerializable
      * @ORM\Column(name="fechaVistoPorEmpresa", type="date")
      */
     private $fechaVistoPorEmpresa;
+
+    /**
+     * @var Requisito[]|ArrayCollection|PersistentCollection
+     * @ORM\OneToMany(targetEntity="App\Models\Entities\Publicaciones\Requisito", fetch="EXTRA_LAZY", cascade={"ALL"}, mappedBy="publicacion")
+     */
+    private $requisitos;
+
+    /**
+     * @var Beneficio[]|ArrayCollection|PersistentCollection
+     * @ORM\OneToMany(targetEntity="App\Models\Entities\Publicaciones\Beneficio", fetch="EXTRA_LAZY", cascade={"ALL"}, mappedBy="publicacion")
+     */
+    private $beneficios;
+
+    /**
+     * @var Responsabilidad[]|ArrayCollection|PersistentCollection
+     * @ORM\OneToMany(targetEntity="App\Models\Entities\Publicaciones\Responsabilidad", fetch="EXTRA_LAZY", cascade={"ALL"}, mappedBy="publicacion")
+     */
+    private $responsabilidades;
 
     /**
      * @var PublicacionCategoria
@@ -154,6 +161,9 @@ class Publicacion extends Activable implements \JsonSerializable
 
     public function __construct()
     {
+        $this->requisitos = new ArrayCollection();
+        $this->beneficios = new ArrayCollection();
+        $this->responsabilidades = new ArrayCollection();
         $this->publicacionEstados = new ArrayCollection();
         $this->publicacionesPostulantes = new ArrayCollection();
     }
@@ -188,22 +198,6 @@ class Publicacion extends Activable implements \JsonSerializable
     public function setDescripcion(string $descripcion): void
     {
         $this->descripcion = $descripcion;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRequisitos(): string
-    {
-        return $this->requisitos;
-    }
-
-    /**
-     * @param string $requisitos
-     */
-    public function setRequisitos(string $requisitos): void
-    {
-        $this->requisitos = $requisitos;
     }
 
     /**
@@ -252,22 +246,6 @@ class Publicacion extends Activable implements \JsonSerializable
     public function setHorarioFin(string $horarioFin): void
     {
         $this->horarioFin = $horarioFin;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBeneficios(): string
-    {
-        return $this->beneficios;
-    }
-
-    /**
-     * @param string $beneficios
-     */
-    public function setBeneficios(string $beneficios): void
-    {
-        $this->beneficios = $beneficios;
     }
 
     /**
@@ -501,20 +479,71 @@ class Publicacion extends Activable implements \JsonSerializable
         $this->agregarEstado($publicacionEstadoActual);
     }
 
+    /**
+     * @return Requisito[]
+     */
+    public function getRequisitos()
+    {
+        return $this->requisitos;
+    }
+
+    /**
+     * @param Requisito
+     */
+    public function agregarRequisito(Requisito $requisito): void
+    {
+        $this->requisitos->add($requisito);
+        $requisito->setPublicacion($this);
+    }
+
+    /**
+     * @return Beneficio[]
+     */
+    public function getBeneficios()
+    {
+        return $this->beneficios;
+    }
+
+    /**
+     * @param Beneficio
+     */
+    public function agregarBeneficio(Beneficio $beneficio): void
+    {
+        $this->beneficios->add($beneficio);
+        $beneficio->setPublicacion($this);
+    }
+
+    /**
+     * @return Responsabilidad[]
+     */
+    public function getResponsabilidades()
+    {
+        return $this->responsabilidades;
+    }
+
+    /**
+     * @param Responsabilidad
+     */
+    public function agregarResponsabilidad(Responsabilidad $responsabilidad): void
+    {
+        $this->responsabilidades->add($responsabilidad);
+        $responsabilidad->setPublicacion($this);
+    }
+
     public function jsonSerialize()
     {
         return [
             'id' => $this->getId(),
-            'activo' => $this->isActivo(),
             'categoria_id' => $this->getPublicacionCategoria()->getId(),
             'titulo' => $this->getTitulo(),
             'descripcion' => $this->getDescripcion(),
             'requisitos' => $this->getRequisitos(),
+            'beneficios' => $this->getBeneficios(),
+            'responsabilidades' => $this->getResponsabilidades(),
             'localidad' => $this->getLocalidad(),
             'salario' => $this->getSalario(),
             'horarioInicio' => $this->getHorarioInicio(),
             'horarioFin' => $this->getHorarioFin(),
-            'beneficios' => $this->getBeneficios(),
             'empresa_id' => $this->getEmpresa()->getId(),
             'modalidadContrato_id' => $this->getModalidadContrato()->getId(),
             'fechaInicio' => $this->getFechaInicio()->format('Y-m-d'),
