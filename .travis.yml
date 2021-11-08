@@ -1,9 +1,14 @@
 language: php
 
+dist: bionic
+
 php:
   - 7.4
 
 before_script:
+    - cp .env.example .env
+    - composer self update
     - composer install
+
     - php artisan key:generate
-    - php artisan cache:clear
+    - php artisan migrate
