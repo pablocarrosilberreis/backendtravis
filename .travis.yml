@@ -6,4 +6,8 @@ php:
   - 7.4
 
 before_script:
+    - cp .env.example .env
     - composer install
+
+    - php artisan key:generate
+    - php artisan migrate
